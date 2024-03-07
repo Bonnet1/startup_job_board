@@ -1,0 +1,112 @@
+{% extends "layout.html" %}
+
+{% block title %}
+{{ jobs['title'] }}
+{% endblock %}
+
+{% block main %}
+<div class="row mb-3 align-items-center">
+    <h1>Applications for {{ jobs['title'] }} Job</h1>
+</div>
+</div>
+<div class="mb-3">
+    <h5>
+        <small class="text-muted">Manage active candidates.</small>
+    </h5>
+</div>
+<div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+    <div class="input-group">
+        <div class="input-group-prepend">
+            <div class="input-group-text" id="btnGroupAddon2">Search: </div>
+        </div>
+        <input type="text" id="searchInput" onkeyup="search()" placeholder="Name">
+    </div>
+
+    <table id="searchTable" class="table table-striped">
+        <tr class="header">
+            <th style="width:25%;">Name</th>
+            <th style="width:25%;">Email</th>
+            <th style="width:15%;"></th>
+            <th style="width:15%;"></th>
+            <th style="width:20%;"></th>
+        </tr>
+        {% for a in applications %}
+        <tr>
+            <td>
+                {{ a['name'] }}
+            </td>
+            <td>
+                {{ a['email'] }}
+            </td>
+            <td>
+                <div class="row g-0 align-items-center">
+                    <div>
+                        <a href="{{ a['cover_letter_url'] }}" target="_blank" class="btn btn-secondary">Cover Letter</a>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="row g-0 align-items-center">
+                    <div>
+                        <a href="{{ a['resume_url'] }}" target="_blank" class="btn btn-secondary">Resume</a>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="row g-0 align-items-center">
+                    <div class="form-check form-switch">
+                        <form name="actionCandidate" action="/toggle_candidate" method="post">
+                            <input type="hidden" value="{{ a['person_id'] }}" name="applicant_id" />
+                            <input type="hidden" value="{{ a['job_id'] }}" name="job_id" />
+                            {% if a['status'] == 'active' %}
+                            <input type="radio" class="btn-check" name="reject_candidate" id="danger-outlined"
+                                autocomplete="off" value=False>
+                            <label class="btn btn-outline-danger" for="danger-outlined"
+                                onclick="this.form.submit()">Remove</label>
+                            {% else %}
+                            <input type="radio" class="btn-check" name="options-outlined" id="success-outlined"
+                                autocomplete="off" checked>
+                            <label class="btn btn-outline-success" for="success-outlined">Add Back</label>
+                            {% endif %}
+                        </form>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <script>
+        function search() {
+            // Declare variables
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("searchInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("searchTable");
+            tr = table.getElementsByTagName("tr");
+
+            // Loop through all table rows, and hide those who don't match the search query
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[0];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+
+        var checkbox = document.querySelector("input[id=flexSwitchCheckChecked]");
+
+        checkbox.addEventListener('change', function() {
+            if (this.checked) {
+                console.log("Checkbox is checked..");
+            } else {
+                console.log("Checkbox is not checked..");
+            }
+        });
+    </script>
+    {% endblock %}

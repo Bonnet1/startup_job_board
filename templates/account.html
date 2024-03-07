@@ -1,0 +1,122 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Account Details
+{% endblock %}
+
+{% block main %}
+{% if message != NULL %}
+<div class="alert alert-warning" role="alert">
+    {{ message }}
+</div>
+{% endif %}
+
+<div class="row mb-3 align-items-center">
+    <h1>My Account</h1>
+</div>
+
+<div class="row mb-3 align-items-center">
+    <div class="col-md-1 mb-3" >
+        <img src="{{ logo }}" class="img-fluid" alt="...">
+    </div>
+    <div class="col-md-10" style="padding-left: 0px;  padding-right: 0px;">
+    <h3>Company Profile</h1>
+    </div>
+</div>
+<div class="mb-3">
+    <h5>
+        <small class="text-muted">Use this page to keep your company details up to date.</small>
+    </h5>
+</div>
+<form action="/account" method="post">
+    <div class="input-group mb-3 p-2">
+        <span class="input-group-text" id="basic-addon1">Company Name</span>
+        <input type="text" class="form-control" name="companyName" value="{{ name }}">
+    </div>
+    <div class="input-group mb-3 p-2">
+        <span class="input-group-text">Company Details</span>
+        <textarea class="form-control" name="companyDetails" aria-label="With textarea">{{ details }}</textarea>
+    </div>
+    <div class="input-group mb-3 p-2">
+        <span class="input-group-text" id="basic-addon1">Logo URL</span>
+        <input type="text" class="form-control" name="companyLogo" value="{{ logo }}">
+    </div>
+    <button type="submit" class="btn btn-primary mb-5 p-2">Update Company Details</button>
+</form>
+
+<div class="row mb-3 p-2 align-items-center">
+    <h3>Active Job Postings</h3>
+    </div>
+</div>
+<div class="mb-3 p-2">
+    <h5>
+        <small class="text-muted">Track all active job postings here.</small>
+    </h5>
+</div>
+<div class="btn-toolbar justify-content-between mb-3 p-2" role="toolbar" aria-label="Toolbar with button groups">
+    <div class="input-group">
+        <div class="input-group-prepend">
+            <div class="input-group-text" id="btnGroupAddon2">Search: </div>
+        </div>
+        <input type="text" id="searchInput" onkeyup="search()" placeholder="Job Title">
+    </div>
+    <div class="btn-group" role="group" aria-label="Second group">
+        <form action="/add" method="get">
+            <button type="submit" class="btn btn-outline-primary">Add Job</button>
+        </form>
+    </div>
+</div>
+<table id="searchTable" class="table table-striped mb-3 p-2">
+    <tr class="header">
+        <th style="width:40%;">Job Title</th>
+        <th style="width:30%;">Status</th>
+        <th style="width:20%;">Applicants</th>
+    </tr>
+    {% for j in jobs %}
+    <tr>
+        <td>
+            <form action="/view_job" method="post">
+                <input type="hidden" value="{{ j['id'] }}" name="job_id" />
+                <button type="submit" class="btn-link">{{ j['job_title'] }}</button>
+            </form>
+        </td>
+        <td>
+            {{ j['status'] }}
+        </td>
+        <td>
+            {% if j['status'] == "open" %}
+            <a href="/view_candidates?q={{ j['id'] }}" class="btn btn-primary">View {{ j['applications'] }} Candidates</a>
+            {% else %}
+            <a href="/view_candidates?q={{ j['id'] }}" class="btn btn-primary disabled">{{ j['applications'] }} Candidates</a>
+            {% endif %}
+
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<script>
+    function search() {
+        // Declare variables
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("searchInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("searchTable");
+        tr = table.getElementsByTagName("tr");
+
+        // Loop through all table rows, and hide those who don't match the search query
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[0];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+</script>
+
+{% endblock %}

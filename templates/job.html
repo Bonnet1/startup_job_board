@@ -1,0 +1,236 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Job Details
+{% endblock %}
+
+{% block main %}
+{% if mode == "edit" %}
+<form action="/edit_job" method="post">
+    <input type="hidden" value="{{ job['id'] }}" name="job_id" />
+    <div class="modal-body">
+        <div class="form-group mb-3 p-1">
+            <label for="exampleFormControlInput1">Job Title</label>
+            <input type="text" class="form-control" name="jobTitle" value="{{ job['title'] }}">
+        </div>
+        <div class="form-group mb-3 p-1">
+            <label for="exampleFormControlTextarea1">Job Description</label>
+            <textarea class="form-control" name="jobDescription" rows="7">{{ job['description'] }}</textarea>
+        </div>
+        <div class="form-group mb-3 p-1">
+            <label for="exampleFormControlInput1">Salary</label>
+            <input type="text" class="form-control" name="jobSalary" value="{{ job['salary'] }}">
+        </div>
+        <div class="form-group mb-3 p-1">
+            <label for="exampleFormControlInput1">Location</label>
+            <input type="text" class="form-control" name="jobLocation" value="{{ job['location'] }}">
+        </div>
+        <div class="form-group mb-3 p-1">
+            <label for="exampleFormControlInput1">Industry</label>
+            <input type="text" class="form-control" name="jobIndustry" value="{{ job['industry'] }}">
+        </div>
+        <div class="form-group mb-3 p-1">
+            <label for="exampleFormControlSelect1">Type</label>
+            <select class="form-control" name="jobType" value="{{ job['type'] }}">
+                <option>Full-Time Permanent</option>
+                <option>Part-Time Permanent</option>
+                <option>Full-Time Contract</option>
+                <option>Part-time Contract</option>
+            </select>
+        </div>
+        <div class="form-group mb-3 p-1">
+            <label for="jobUrl">Link to application</label>
+            <input type="text" class="form-control" name="jobUrl" value="{{ job['ats_url'] }}">
+        </div>
+        <div class="form-group mb-3 p-1">
+            <label for="status">Current job status</label>
+            <select class="form-select" aria-label="Default select example" name="status">
+                <option value="open">Open</option>
+                <option value="planned">Planned</option>
+                <option value="closed">Closed</option>
+            </select>
+        </div>
+
+    </div>
+    <div class="modal-footer mb-3 p-1">
+        <button type="submit" class="btn btn-primary">Edit posting</button>
+    </div>
+</form>
+<div class="d-flex flex-row-reverse">
+    <div class="p-2">
+        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+            Remove Job
+        </button>
+    </div>
+  </div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this job posting?
+            </div>
+            <form action="/delete_job" method="post">
+                <input type="hidden" value="{{ job['id'] }}" name="job_to_delete" />
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </div>
+        </div>
+    </div>
+    <form action="/" method="get">
+        <button type="submit" class="btn btn-outline-primary">Delete</button>
+    </form>
+</div>
+{% elif mode == "add" %}
+<div class="mb-3">
+    <h1>Post a new role</h1>
+</div>
+<form action="/add" method="post">
+    <div class="modal-body">
+        <div class="form-group">
+            <label for="exampleFormControlInput1">Job Title</label>
+            <input type="text" class="form-control" name="jobTitle" placeholder="e.g. Product Manager">
+        </div>
+        <div class="form-group">
+            <label for="exampleFormControlTextarea1">Job Description</label>
+            <textarea class="form-control" name="jobDescription" rows="7"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="exampleFormControlInput1">Salary</label>
+            <input type="text" class="form-control" name="jobSalary" placeholder="e.g. $120,000">
+        </div>
+        <div class="form-group">
+            <label for="exampleFormControlInput1">Location</label>
+            <input type="text" class="form-control" name="jobLocation" placeholder="e.g. Boston, MA / Remote">
+        </div>
+        <div class="form-group">
+            <label for="exampleFormControlInput1">Industry</label>
+            <input type="text" class="form-control" name="jobIndustry" placeholder="e.g. e-commerce">
+        </div>
+        <div class="form-group">
+            <label for="exampleFormControlSelect1">Type</label>
+            <select class="form-control" name="jobType">
+                <option>Full-Time Permanent</option>
+                <option>Part-Time Permanent</option>
+                <option>Full-Time Contract</option>
+                <option>Part-time Contract</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="exampleFormControlInput1">Link to application</label>
+            <input type="text" class="form-control" name="jobUrl"
+                placeholder="e.g. https://careers.toasttab.com/jobs/senior-solutions-engineer-boston-massachusetts-united-states">
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Add posting</button>
+    </div>
+</form>
+
+{% else %}
+<div class="mb-3">
+    <h1>View {{ job['company_name'] }} job posting</h1>
+    <div class="col mb-3">
+        <div class="row g-5">
+            <div class="h5 mb-3">
+                {{ job['title'] }}
+            </div>
+        </div>
+        <div class="row g-5">
+            <div class="col-6 col-md-4">
+                {{ job['location'] }}
+            </div>
+            <div class="col-6 col-md-4">
+                {{ job['type'] }}
+            </div>
+        </div>
+        <div class="row g-5">
+            <div class="col-6 col-md-4">
+                {{ job['salary'] }}
+            </div>
+            <div class="col-6 col-md-4">
+                {{ job['industry'] }}
+            </div>
+        </div>
+        <div class="container-fluid">
+            </ul>
+            <div class="card-body">
+                <p class="card-text">{{ job['description'] }}</p>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="card-body">
+                {% if job['owner_id'] != user_id %}
+                <!-- <a href="{{ job['ats_url'] }}" class="btn btn-primary">Apply</a> -->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                    data-bs-target="#applyModal">Apply</button>
+                {% else %}
+                <form action="/view_job" method="post">
+                    <input type="hidden" value="{{ job['id'] }}" name="job_id" />
+                    <button type="submit" class="btn btn-outline-warning">Edit</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+        <div class="modal fade" id="applyModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form action="/apply?q={{ job['id'] }}" method="post">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Apply to {{ job['title'] }}
+                            </h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="resume" class="col-form-label">Online Resume URL:</label>
+                                <input type="text" class="form-control" id="resume" name="resume"
+                                    placeholder="e.g. LinkedIn URL, GitHub URL, online resume">
+                            </div>
+                            <div class="mb-3">
+                                <label for="cover_letter" class="col-form-label">Why do you think you would
+                                    be a
+                                    good
+                                    fit
+                                    for
+                                    this
+                                    role:</label>
+                                <textarea class="form-control" id="cover_letter" name="cover_letter"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Apply</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+<div class="mb-3">
+    <h3>About {{ job['company_name'] }}</h3>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{{ job['industry'] }}</h5>
+            <p class="card-text">{{ job['about'] }}</p>
+        </div>
+    </div>
+</div>
+</div>
+{% endif %}
+<script>
+
+</script>
+{% endblock %}
